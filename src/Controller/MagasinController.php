@@ -54,6 +54,23 @@ class MagasinController
     }
 
     /**
+     * @Route("/getOffresByMagasin/{id}", name="api_magasins_getById", methods={"GET"})
+     * @param Magasin $magasin
+     * @param SerializerInterface $serializer
+     * @return JsonResponse
+     */
+    public function readOffreByMagasin(Magasin $magasin, SerializerInterface $serializer): JsonResponse
+    {
+
+        return new JsonResponse(
+            $serializer->serialize($magasin, "json", ['groups' => 'magasinsOffres:read']),
+            JsonResponse::HTTP_OK,
+            [],
+            true
+        );
+    }
+
+    /**
      * @Route("/{id}", name="api_magasin_create", methods={"POST"})
      * @param Offre $offre
      * @param Request $request
@@ -64,7 +81,7 @@ class MagasinController
     public function createMagasin(Offre $offre, Request $request, SerializerInterface $serializer, EntityManagerInterface $entityManager): JsonResponse
     {
         $magasin = $serializer->deserialize($request->getContent(), Magasin::class, "json");
-        $magasin->setOffre($offre);
+        $magasin->addOffre($offre);
 
         $entityManager->persist($magasin);
         $entityManager->flush();

@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -11,8 +13,9 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  */
 
- class Magasin{
-   
+class Magasin
+{
+
     // Propriétés
 
     /**
@@ -36,42 +39,71 @@ use Doctrine\ORM\Mapping as ORM;
     private $adress;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Offre", inversedBy="magasins")
-     * @ORM\JoinColumn(onDelete="CASCADE")
-     * @Groups({"magasins:read"})
+     * @ORM\ManyToMany(targetEntity="App\Entity\Offre", inversedBy="magasins")
+     * @ORM\JoinTable(name="offres_magasins")
+     * @Groups({"magasins:read", "magasinsOffres:read"})
      */
-    private $offre;
+    private $offres;
+
+    // Constructeur
+
+    public function __construct()
+    {
+        $this->offres = new ArrayCollection();
+    }
 
     // Getters et setters
 
-    public function getId() : ?int{
+    public function getId(): ?int
+    {
         return $this->id;
     }
 
-    public function getName() : ?string{
+    public function getName(): ?string
+    {
         return $this->name;
     }
 
-    public function setName(string $name) : self{
+    public function setName(string $name): self
+    {
         $this->name = $name;
         return $this;
     }
 
-    public function getAdress() : ?string{
+    public function getAdress(): ?string
+    {
         return $this->adress;
     }
 
-    public function setAdress(string $adress) : self{
+    public function setAdress(string $adress): self
+    {
         $this->adress = $adress;
         return $this;
     }
 
-    public function getOffre() : Offre{
-        return $this->offre;
+    /**
+     * @return Collection|Offre[]
+     */
+
+    public function getOffres(): Collection
+    {
+        return $this->offres;
     }
 
-    public function setOffre(?Offre $offre) : self{
-        $this->offre = $offre;
+    public function addOffre(Offre $offre): self
+    {
+        if (!$this->offres->contains($offre)) {
+            $this->offres[] = $offre;
+            $offre->addMagasin($this);
+        }
         return $this;
     }
- }
+
+    public function removeOffre(Offre $offre): self
+    {
+        if ($this->offres->contains($offre)) {
+            $this->offres->removeElement($offre);
+        }
+        return $this;
+    }
+}

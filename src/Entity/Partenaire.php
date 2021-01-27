@@ -22,13 +22,13 @@ class Partenaire
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue
-     * @Groups({"partenaires:read", "magasins:read", "offres:read"})
+     * @Groups({"partenaires:read", "magasins:read", "offres:read", "magasinsOffres:read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255, unique = true)
-     * @Groups({"partenaires:read", "magasins:read", "offres:read"})
+     * @Groups({"partenaires:read", "magasins:read", "offres:read", "magasinsOffres:read"})
      */
     private $name;
 
